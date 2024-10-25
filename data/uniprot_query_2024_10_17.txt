@@ -1,0 +1,16 @@
+(taxonomy_id:6239) AND (cc_developmental_stage_exp:*) AND (reviewed:true) AND ((keyword:KW-0805) OR  (keyword:KW-0889) OR (keyword:KW-0806) OR (keyword:KW-0238) OR (keyword:KW-0694) OR (keyword:KW-0226) OR (keyword:KW-0010))
+
+Transcription regulation - KW-0805
+
+Transcription antitermination - KW-0889
+
+Transcription termination - KW-0806
+
+DNA-binding - KW-0238
+
+RNA-binding - KW-0694
+
+DNA-condensation - KW-0226
+
+Activator - KW-0010
+
