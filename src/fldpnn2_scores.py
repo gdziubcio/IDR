@@ -1,6 +1,11 @@
 import pandas as pd
+import re
 
-def get_scores(path: str = "data/fldpnn2.txt") -> pd.DataFrame:
+def extract_first_bracketed(text):
+    match = re.search(r'\[.*?\]', text)
+    return match.group(0) if match else None
+
+def get_scores(path: str = "data/fldpnn2_master.txt") -> pd.DataFrame:
     """
     Reads a txt file from fldpnn2 containing disorder sequences, 
     processes the data, and returns a DataFrame.
@@ -12,10 +17,11 @@ def get_scores(path: str = "data/fldpnn2.txt") -> pd.DataFrame:
     Returns:
         pd.DataFrame: A DataFrame containing two columns:
                       - "ID": The cleaned sequence identifiers.
+                      - "IDR": The corresponding disordered regions.
+                      - "AA": The corresponding amino acid sequences.
+                      - "Disordered": The corresponding disordered regions.
                       - "fldpnn2_score": The corresponding disorder scores.
     """
-    # Initialize an empty dictionary to store sequence IDs and their scores
-    fldpnn2_dict: dict = {}
 
     with open(path, mode="r") as file:
 
@@ -24,28 +30,31 @@ def get_scores(path: str = "data/fldpnn2.txt") -> pd.DataFrame:
         # header occupies always first 8 lines
         cleaned_lines = [line.strip() for line in lines[8:]]
         
-        # Extract sequence IDs and disorder scores:
-        # - Sequence IDs are assumed to be every 5th line starting from the first
-        # - Disorder scores are assumed to be every 5th line starting from the fifth
+        # Extract sequence information from apropiate lines
+
         sequence_id = cleaned_lines[0::5]
         idr_ranges = cleaned_lines[1::5]
         aa_sequence = cleaned_lines[2::5]
         is_disordered = cleaned_lines[3::5]
         disorder_scores = cleaned_lines[4::5]
-        
-        # Create a dictionary mapping each sequence ID to its disorder score
-        fldpnn2_dict = {
-            name: disorder_seq 
-            for name, disorder_seq in zip(sequence_id, disorder_scores)
-        }
-
+    
+    # create a DataFrame from the extracted data
 
     df_fldpnn2 = pd.DataFrame(
-        fldpnn2_dict.items(), 
-        columns=["ID", "fldpnn2_score"]
+        {
+            "ID": sequence_id,
+            "idr_ranges": idr_ranges,
+            "AA": aa_sequence,
+            "Disordered": is_disordered,
+            "fldpnn2_score": disorder_scores,
+        }
     )
     
-    # clean the sequence identifiers
+    # convert the sequence string data to apropriate type 
     df_fldpnn2["ID"] = df_fldpnn2["ID"].str.replace(">", "", regex=False)
+    df_fldpnn2["idr_ranges"] = df_fldpnn2["idr_ranges"].apply(extract_first_bracketed)
+    df_fldpnn2["AA"] = df_fldpnn2["AA"].apply(lambda x: [aa for aa in x.split(",")])
+    df_fldpnn2["Disordered"] = df_fldpnn2["Disordered"].apply(lambda x: [int(d) for d in x.split(",")]) 
+    df_fldpnn2["fldpnn2_score"] = df_fldpnn2["fldpnn2_score"].apply(lambda x: [float(s) for s in x.split(",")])   
     
     return df_fldpnn2
