@@ -27,13 +27,16 @@ def get_scores(path: str = "data/fldpnn2.txt") -> pd.DataFrame:
         # Extract sequence IDs and disorder scores:
         # - Sequence IDs are assumed to be every 5th line starting from the first
         # - Disorder scores are assumed to be every 5th line starting from the fifth
-        sequence_ids = cleaned_lines[0::5]
+        sequence_id = cleaned_lines[0::5]
+        idr_ranges = cleaned_lines[1::5]
+        aa_sequence = cleaned_lines[2::5]
+        is_disordered = cleaned_lines[3::5]
         disorder_scores = cleaned_lines[4::5]
         
         # Create a dictionary mapping each sequence ID to its disorder score
         fldpnn2_dict = {
             name: disorder_seq 
-            for name, disorder_seq in zip(sequence_ids, disorder_scores)
+            for name, disorder_seq in zip(sequence_id, disorder_scores)
         }
 
 
