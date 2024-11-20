@@ -1,9 +1,18 @@
 import pandas as pd
 import re
 
-def extract_first_bracketed(text):
-    match = re.search(r'\[.*?\]', text)
-    return match.group(0) if match else None
+def merge_ranges(text, gap=10):
+    # Extract all ranges as tuples of integers
+    ranges = [tuple(map(int, s.split('-'))) for s in re.findall(r'\d+-\d+', text)]
+    # Merge ranges based on the gap
+    merged = []
+    for start, end in ranges:
+        if merged and start - merged[-1][1] <= gap:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+        else:
+            merged.append((start, end))
+    return merged
+
 
 def get_scores(path: str = "data/fldpnn2_master.txt") -> pd.DataFrame:
     """
@@ -52,7 +61,7 @@ def get_scores(path: str = "data/fldpnn2_master.txt") -> pd.DataFrame:
     
     # convert the sequence string data to apropriate type 
     df_fldpnn2["ID"] = df_fldpnn2["ID"].str.replace(">", "", regex=False)
-    df_fldpnn2["idr_ranges"] = df_fldpnn2["idr_ranges"].apply(extract_first_bracketed)
+    df_fldpnn2['merged_ranges'] = df_fldpnn2['idr_ranges'].apply(merge_ranges)
     df_fldpnn2["AA"] = df_fldpnn2["AA"].apply(lambda x: [aa for aa in x.split(",")])
     df_fldpnn2["Disordered"] = df_fldpnn2["Disordered"].apply(lambda x: [int(d) for d in x.split(",")]) 
     df_fldpnn2["fldpnn2_score"] = df_fldpnn2["fldpnn2_score"].apply(lambda x: [float(s) for s in x.split(",")])   
