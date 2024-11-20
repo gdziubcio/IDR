@@ -16,7 +16,7 @@ def parse_protein_data(filepath:str='data/psp.txt') -> pd.DataFrame:
                 
                 # Initialize a new protein data entry
                 protein_data = {
-                    "name": line[1:],  # Protein name
+                    "ID": line[1:],  # Protein name
                     "AA": [],
                     "DRegion": []
                 }
