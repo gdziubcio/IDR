@@ -14,7 +14,7 @@ def merge_ranges(text, gap=10):
     return merged
 
 
-def get_scores(path: str = "data/fldpnn2_master.txt") -> pd.DataFrame:
+def get_scores(path: str = "data/fldpnn2/fldpnn2_master.txt") -> pd.DataFrame:
     """
     Reads a txt file from fldpnn2 containing disorder sequences, 
     processes the data, and returns a DataFrame.

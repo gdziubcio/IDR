@@ -1,7 +1,7 @@
 import re 
 import pandas as pd
 
-def parse_protein_data(filepath:str='data/psp.txt') -> pd.DataFrame:
+def parse_protein_data(filepath:str='data/psp/psp.txt') -> pd.DataFrame:
     proteins = []
     protein_data = None
 
